@@ -16,8 +16,9 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    // argument input and checks / error output 
     const char* fileType = argv[1];
-    if (argv[1] != "B" || argv[1] != "S") {
+    if (std::string(argv[1]) != "B" && std::string(argv[1]) != "S") {
         std::cout << "Invalid Function Type" << std::endl;
         return 1;
     }
@@ -38,26 +39,32 @@ int main(int argc, char* argv[]) {
 
 
     const char* modeOp = argv[5];
-    if (argv[5] != "E" || argv[5] != "D") {
+    if (std::string(argv[5]) != "E" && std::string(argv[5]) != "D") {
         std::cout << "Invalid Mode Type" << std::endl;
         return 1;
     }
 
-    std::ifstream inputFile(inputFilePath);
-    std::string inputString((std::istreambuf_iterator<char>(inputFile)), std::istreambuf_iterator<char>());
+
+    // had to change string to vectors as the string for input was causing issues removing the padding
+    // file input reading
+    std::ifstream inputFile(inputFilePath, std::ios::binary);
+    std::vector<unsigned char> inputString((std::istreambuf_iterator<char>(inputFile)), std::istreambuf_iterator<char>());
     inputFile.close();
 
-    std::ifstream keyFile(keyFilePath);
+    // key file input reading
+    std::ifstream keyFile(keyFilePath, std::ios::binary);
     std::string keyString((std::istreambuf_iterator<char>(keyFile)), std::istreambuf_iterator<char>());
     keyFile.close();
 
+    // block cipher call
     if (std::string(fileType) == "B") {
-        blockCipher(inputString, outputFilePath, keyString);
+        blockCipher(inputString, outputFilePath, keyString, modeOp);
     }
 
-    /*if (std::string(fileType) == "S") {
+    // stream cipher call
+    if (std::string(fileType) == "S") {
         streamCipher(inputString, outputFilePath, keyString);
-    }*/
+    }
 
     return 0;
 }
